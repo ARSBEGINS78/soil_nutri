@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Soil Testing Interface - Mobile</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-animate.js"></script>
+
+    <style>
+        /* --- CORE PAGE STYLING --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            -webkit-font-smoothing: antialiased; /* Smoother fonts on iOS */
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px; /* softer corners for mobile feel */
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 6px solid #2ecc71; 
+            transition: transform 0.2s;
+        }
+
+        /* Headers */
+        h1 {
+            font-size: 1.3rem; /* Adjusted for mobile readability */
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #444;
+            font-weight: 600;
+        }
+        
+        /* --- FORM ELEMENTS --- */
+        select {
+            width: 100%;
+            padding: 14px; /* Larger touch target */
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            outline: none;
+            appearance: none; /* Removes default OS styling for cleaner look */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 12px auto;
+        }
+
+        select:focus {
+            border-color: #2ecc71;
+            background-color: #fff;
+        }
+
+        /* --- RESULT BOXES --- */
+        .result-box {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .result-box h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+
+        /* --- IMAGE CONTAINER --- */
+        .image-container {
+            margin-top: 15px;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .image-container img {
+            width: 100%; /* Full width on mobile */
+            height: auto;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* --- MOBILE SPECIFIC TWEAKS --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Reduce outer padding */
+            }
+            .container {
+                width: 100%;
+            }
+            .card {
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 12px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+            .app-header h1 {
+                font-size: 1.8rem !important;
+            }
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-box.ng-enter {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+    </style>
+</head>
+
+<body ng-app="soilApp" ng-controller="soilCtrl">
+
+<div class="container">
+
+    <div class="app-header" style="text-align: center; margin-bottom: 25px; margin-top: 10px;">
+        <h1 style="font-size: 2.2rem; color: #27ae60; margin-bottom: 5px;">🌱 Smart Soil Lab</h1>
+        <p style="color: #666; font-size: 0.9rem;">Expert Recommendations System</p>
+    </div>
+
+    <div class="card">
+        <h1>Check Nutrient Information</h1>
+        <select ng-model="Nutr">
+            <option value="">-- Select a Nutrient --</option>
+            <option value="PH">PH (Acidity)</option>
+            <option value="EC">Electrical Conductivity</option>
+            <option value="Oc">Organic Carbon</option>
+            <option value="Phosphorous">Phosphorous</option> 
+            <option value="Nitrogen">Nitrogen</option>
+            <option value="potassium">Potassium</option>      
+        </select>
+
+        <div ng-switch="Nutr" class="fade-box">
+            <div ng-switch-when="PH" class="result-box">
+                <h2>PH of soil</h2>
+                <p>Measures the acidity or alkalinity of the soil.</p>
+            </div>
+            <div ng-switch-when="EC" class="result-box">
+                <h2>Electrical Conductivity</h2>
+                <p>Measures salinity levels.</p>
+            </div>
+            <div ng-switch-when="Oc" class="result-box">
+                <h2>Organic Carbon</h2>
+                <p>Indicates organic matter content and soil fertility.</p>
+            </div>
+            <div ng-switch-when="Phosphorous" class="result-box">
+                <h2>Phosphorous</h2>
+                <p>Crucial for root development and energy transfer.</p>
+                <div class="image-container">
+                    <img src="phosphate.jpeg" alt="Phosphate Generic"> 
+                </div>
+            </div>
+            <div ng-switch-when="Nitrogen" class="result-box">
+                <h2>Nitrogen</h2>
+                <p>Essential for leaf growth and green color.</p>
+            </div>
+            <div ng-switch-when="potassium" class="result-box">
+                <h2>Potassium</h2>
+                <p>Important for overall plant immunity and water regulation.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>Select Soil PH Level</h1>
+        <select ng-model="PH">
+            <option value="">-- Select Level --</option>
+            <option value="low">Low (Acidic)</option>
+            <option value="medium">Medium (Neutral)</option>
+            <option value="high">High (Alkaline)</option>
+        </select>
+
+        <div ng-switch="PH" class="fade-box">
+            <div ng-switch-when="low" class="result-box">
+                <h2>Status: Low PH</h2>
+                <p><strong>Action:</strong> Apply Lime (CaCO3) in bulk.</p>
+            </div>
+            <div ng-switch-when="medium" class="result-box">
+                <h2>Status: Medium PH</h2>
+                <p><strong>Action:</strong> Maintenance dose of CaCO3 (100 kg/acre).</p>
+            </div>
+            <div ng-switch-when="high" class="result-box">
+                <h2>Status: High PH</h2>
+                <p><strong>Action:</strong> Do not add CaCO3.</p>
+            </div>
+        </div>
+        
+        <div class="image-container" ng-show="PH">
+            <img src="caco3.jpeg" alt="Calcium Carbonate">
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>Select Electrical Conductivity (EC)</h1>
+        <select ng-model="EC">
+            <option value="">-- Select Level --</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+
+        <div ng-switch="EC" class="fade-box">
+            <div ng-switch-when="low" class="result-box">
+                <h2>Status: Low EC</h2>
+                <p>Nutrient levels may be insufficient for optimal growth.</p>
+            </div>
+            <div ng-switch-when="medium" class="result-box">
+                <h2>Status: Medium EC</h2>
+                <p>Soil condition is optimal.</p>
+            </div>
+            <div ng-switch-when="high" class="result-box">
+                <h2>Status: High EC</h2>
+                <p>Saline soil. Requires leaching with fresh water.</p>
+            </div>
+        </div>
+        <div class="image-container" ng-show="EC">
+            <img src="soil.jpeg" alt="Soil Image">
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>Select Organic Carbon (OC)</h1>
+        <select ng-model="OC">
+            <option value="">-- Select Level --</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+
+        <div ng-switch="OC" class="fade-box">
+            <div ng-switch-when="low" class="result-box">
+                <h2>Status: Low Organic Carbon</h2>
+                <p><strong>Action:</strong> Urgent need for organic manure/compost.</p>
+            </div>
+            <div ng-switch-when="medium" class="result-box">
+                <h2>Status: Medium Organic Carbon</h2>
+                <p><strong>Action:</strong> Apply standard fertilizer maintenance.</p>
+            </div>
+            <div ng-switch-when="high" class="result-box">
+                <h2>Status: High Organic Carbon</h2>
+                <p><strong>Action:</strong> Excellent health. No extra organic fertilizer needed.</p>
+            </div>
+        </div>
+        <div class="image-container" ng-show="OC">
+            <img src="manure.jpeg" alt="Manure">
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>Select Phosphorous Level</h1>
+        <select ng-model="phosphorous">
+            <option value="">-- Select Level --</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+
+        <div ng-switch="phosphorous" class="fade-box">
+            <div ng-switch-when="low" class="result-box">
+                <h2>Status: Low Phosphorous</h2>
+                <p><strong>Action:</strong> Bulk phosphorous is required.</p>
+            </div>
+            <div ng-switch-when="medium" class="result-box">
+                <h2>Status: Medium Phosphorous</h2>
+                <p><strong>Action:</strong> Some phosphate is required.</p>
+            </div>
+            <div ng-switch-when="high" class="result-box">
+                <h2>Status: High Phosphorous</h2>
+                <p><strong>Action:</strong> No phosphate is required.</p>
+            </div>
+        </div>
+        
+        <div class="image-container" ng-show="phosphorous">
+            <img src="phosphate.jpeg" alt="Phosphate Fertilizer">
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>Select Nitrogen Level</h1>
+        <select ng-model="nitrogen">
+            <option value="">-- Select Level --</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+
+        <div ng-switch="nitrogen" class="fade-box">
+            <div ng-switch-when="low" class="result-box">
+                <h2>Status: Low Nitrogen</h2>
+                <p><strong>Action:</strong> Apply bulk Nitrogen (Urea).</p>
+            </div>
+            <div ng-switch-when="medium" class="result-box">
+                <h2>Status: Medium Nitrogen</h2>
+                <p><strong>Action:</strong> Apply standard Nitrogen dose.</p>
+            </div>
+            <div ng-switch-when="high" class="result-box">
+                <h2>Status: High Nitrogen</h2>
+                <p><strong>Action:</strong> Avoid Nitrogen application.</p>
+            </div>
+        </div>
+        <div class="image-container" ng-show="nitrogen">
+            <img src="nitrogen_fix.jpeg" alt="Nitrogen Fixation">
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>Select Potassium Level</h1>
+        <select ng-model="potassium">
+            <option value="">-- Select Level --</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+
+        <div ng-switch="potassium" class="fade-box">
+            <div ng-switch-when="low" class="result-box">
+                <h2>Status: Low Potassium</h2>
+                <p><strong>Action:</strong> Apply Potash/K in bulk.</p>
+            </div>
+            <div ng-switch-when="medium" class="result-box">
+                <h2>Status: Medium Potassium</h2>
+                <p><strong>Action:</strong> Apply moderate Potash.</p>
+            </div>
+            <div ng-switch-when="high" class="result-box">
+                <h2>Status: High Potassium</h2>
+                <p><strong>Action:</strong> No Potash required.</p>
+            </div>
+        </div>
+        <div class="image-container" ng-show="potassium">
+            <img src="potash.jpeg" alt="Potash Fertilizer">
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var app = angular.module("soilApp", ['ngAnimate']);
+    app.controller("soilCtrl", function($scope) {
+        // Main controller logic
+    });
+</script>
+
+</body>
+</html>
